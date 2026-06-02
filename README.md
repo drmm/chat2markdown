@@ -12,7 +12,12 @@ This folder is a copy-based refactor of the ChatMain utilities. The original fil
 
 ## Configuration
 
-Copy `config.example.ini` to `config.ini` for local use. Keep `config.example.ini` as the shareable template. Do not commit `config.ini`, `.env`, `archive/`, or `filtered/`; those can contain local paths, generated chat transcripts, and private conversation content.
+There are two shareable templates:
+
+- `config.example.ini` is the portable starter template. It writes under this repo by default and keeps cleanup off.
+- `config.legacy.example.ini` is the ChatMain parity template. It points back to the original `Chats/ChatMain` archive, filtered folder, search output, and title `.env` location.
+
+Copy one template to `config.ini` for local use. Do not commit `config.ini`, `.env`, `archive/`, or `filtered/`; those can contain local paths, generated chat transcripts, and private conversation content.
 
 Path tokens:
 
@@ -25,7 +30,7 @@ Path tokens:
 
 The Python files in this folder should not need machine-specific drive paths. Change `archive_root` in `config.ini` to move or rename the whole archive folder. Leave the per-source output paths blank unless you want one source to write somewhere different.
 
-Cleanup is disabled by default. Leave `cleanup_small_artifacts`, `cleanup_legacy_plan_artifacts`, and `cleanup_duplicate_artifacts` set to `false` when testing against an existing archive you do not want pruned.
+Cleanup is disabled in the portable template. It is enabled in the legacy template because the original ChatMain exporter always ran the small-artifact, legacy-plan, and duplicate cleanup passes before rebuilding `index.csv`.
 
 Useful safety settings:
 
@@ -33,6 +38,8 @@ Useful safety settings:
 - `test_mode = true` limits selected sources to one item per source/type where supported.
 - `overwrite_existing = false` skips or creates numbered outputs instead of replacing existing files.
 - `lookback_days`, `modified_after`, and `modified_before` limit exports/searches by source file modification date.
+
+For a safe preview when your local `config.ini` is in legacy live mode, run `python export_chat_archive.py --config-ini config.ini --dry-run`.
 
 ## Config Reference
 
@@ -58,6 +65,10 @@ Useful safety settings:
 | `export.lookback_days` | Only export source files modified within the last N days. | No lookback limit. |
 | `export.modified_after`, `modified_before` | Exact export date window. | No date limit. |
 | `export.cleanup_*` | Optional archive pruning actions. | Off. |
+| `export.repair_cursor_placeholders` | Run the Cursor DB placeholder repair pass after export. | On. |
+| `export.sample_plan_artifacts` | Apply `--test` and sample limits to copied/extracted plan artifacts. | On in portable config; off in legacy config. |
+| `export.overwrite_plan_artifacts` | Replace copied/extracted plan archive files when regenerated. | Off in portable config; on in legacy config. |
+| `export.overwrite_copilot_cli_artifacts` | Replace Copilot CLI archive files when regenerated. | Off in portable config; on in legacy config. |
 | `filter.import_file` | Markdown chat file to filter. | No input file. |
 | `filter.roles` | Roles to keep after filtering. | Keep none unless CLI overrides. |
 | `filter.exclude_roles` | Roles to remove entirely. | Remove none. |
@@ -67,20 +78,16 @@ Useful safety settings:
 | `search.folders` | Folders `searchMD.py` scans. | No search folder. |
 | `search.filetypes` | File extensions to scan, such as `.md, .py`. | No filetypes. |
 | `search.match_any`, `match_all` | Search terms. | Use CLI terms or no terms. |
-| `search.lookback_days`, `modified_after`, `modified_before` | Search file modified-date window. | No date limit unless configured. |
+| `search.lookback_days`, `modified_after`, `modified_before` | Search file modified-date window. | No date limit if all are blank. The templates set `lookback_days = 1000`. |
 | `titles.*` | Title-generation settings and optional model providers. | Local/default title behavior. |
-
-## Optional Roadmap
-
-- Add per-source date windows, such as separate Codex or Claude lookback settings.
-- Add a config validation command that prints every resolved path and whether it exists.
-- Add a temporary proof export command that writes one chat and one plan per selected source into a temp folder.
 
 ## Example Commands
 
 ```bash
-python export_chat_archive.py --config-ini config.ini --codex --test
-python export_chat_archive.py --config-ini config.ini --codex --test --run-live
+python export_chat_archive.py --config-ini config.ini --dry-run
+python export_chat_archive.py --config-ini config.ini
+python export_chat_archive.py --config-ini config.ini --codex --test --dry-run
 python filter_chat.py --config-ini config.ini
 python searchMD.py --config-ini config.ini --any optimizer --output "%TEMP%/chat2markdown-search.csv"
+python export_chat_archive.py --input-file "%USER%/path/to/file.jsonl"
 ```

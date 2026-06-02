@@ -2842,6 +2842,10 @@ def main():
     clean_small_enabled = args.clean_small or cfg.get_bool("export", "cleanup_small_artifacts", False)
     clean_legacy_enabled = args.clean_legacy_plans or cfg.get_bool("export", "cleanup_legacy_plan_artifacts", False)
     clean_duplicates_enabled = args.clean_duplicates or cfg.get_bool("export", "cleanup_duplicate_artifacts", False)
+    repair_cursor_placeholders = cfg.get_bool("export", "repair_cursor_placeholders", True)
+    sample_plan_artifacts = cfg.get_bool("export", "sample_plan_artifacts", True)
+    overwrite_plan_artifacts = args.force or cfg.get_bool("export", "overwrite_plan_artifacts", False)
+    overwrite_copilot_cli_artifacts = args.force or cfg.get_bool("export", "overwrite_copilot_cli_artifacts", False)
     modified_after, modified_before = build_modified_window(cfg, "export")
 
     claude_plan_sources = []
@@ -2887,7 +2891,7 @@ def main():
     configured_sample_limit = cfg.get_int("export", "sample_limit", 0)
     sample_limit = args.sample if args.sample else configured_sample_limit
     sample_total = 1 if args.test else 0
-    plan_sample_total = sample_total if sample_total else sample_limit
+    plan_sample_total = (sample_total if sample_total else sample_limit) if sample_plan_artifacts else 0
 
     if dry_run_enabled:
         print("DRY RUN - no files will be written, renamed, deleted, or indexed.")
@@ -2908,6 +2912,10 @@ def main():
         print(f"modified_after={modified_after or 'none'}")
         print(f"modified_before={modified_before or 'none'}")
         print(f"overwrite_existing={args.force}")
+        print(f"repair_cursor_placeholders={repair_cursor_placeholders}")
+        print(f"sample_plan_artifacts={sample_plan_artifacts}")
+        print(f"overwrite_plan_artifacts={overwrite_plan_artifacts}")
+        print(f"overwrite_copilot_cli_artifacts={overwrite_copilot_cli_artifacts}")
         print(f"cleanup_small_artifacts={clean_small_enabled}")
         print(f"cleanup_legacy_plan_artifacts={clean_legacy_enabled}")
         print(f"cleanup_duplicate_artifacts={clean_duplicates_enabled}")
@@ -2972,7 +2980,7 @@ def main():
             if export_cursor_from_db(
                 args.cursor_output,
                 max_items=db_max,
-                skip_repair=not args.force,
+                skip_repair=not repair_cursor_placeholders,
                 overwrite=args.force,
                 modified_after=modified_after,
                 modified_before=modified_before,
@@ -3012,7 +3020,7 @@ def main():
             max_items=sample_total if sample_total else sample_limit,
             modified_after=modified_after,
             modified_before=modified_before,
-            overwrite=args.force,
+            overwrite=overwrite_copilot_cli_artifacts,
         )
         if copilot_rows:
             success = True
@@ -3030,7 +3038,7 @@ def main():
                     max_items=plan_sample_total,
                     modified_after=modified_after,
                     modified_before=modified_before,
-                    overwrite=args.force,
+                    overwrite=overwrite_plan_artifacts,
                 ))
             nia_plan_hashes = set()
             for nia_plan_path in nia_plan_sources:
@@ -3041,7 +3049,7 @@ def main():
                     max_items=plan_sample_total,
                     modified_after=modified_after,
                     modified_before=modified_before,
-                    overwrite=args.force,
+                    overwrite=overwrite_plan_artifacts,
                 ))
             extra_index_rows.extend(extract_codex_plans(
                 archive_root / "codex" / "plans",
@@ -3049,7 +3057,7 @@ def main():
                 max_items=plan_sample_total,
                 modified_after=modified_after,
                 modified_before=modified_before,
-                overwrite=args.force,
+                overwrite=overwrite_plan_artifacts,
             ))
 
         if args.all or args.plans or args.copilot_cli or args.copilot_cli_only:
@@ -3059,7 +3067,7 @@ def main():
                 max_items=plan_sample_total,
                 modified_after=modified_after,
                 modified_before=modified_before,
-                overwrite=args.force,
+                overwrite=overwrite_plan_artifacts,
             ))
 
         if extra_index_rows:
