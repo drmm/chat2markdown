@@ -155,7 +155,13 @@ def apply_cli(settings: dict[str, object], args: argparse.Namespace) -> dict[str
 
 def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Filter exported Markdown chat transcripts into review-ready files.")
-    parser.add_argument("--config-ini", "--ini", dest="config_ini", default=None)
+    parser.add_argument(
+        "--config-ini",
+        "--ini",
+        dest="config_ini",
+        default=None,
+        help="Optional config override. Default: config.ini next to these scripts, then config.example.ini.",
+    )
     parser.add_argument("--import-file", dest="import_file", default=None)
     parser.add_argument("--folder-path", dest="folder_path", default=None)
     parser.add_argument("--export-excluded-to-path", dest="export_excluded_to_path", default=None)

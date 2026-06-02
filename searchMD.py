@@ -187,7 +187,7 @@ def print_table(rows: list[dict], limit: int | None = None) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Search markdown folders and write a CSV of matches.")
     parser.add_argument("--config-ini", "--ini", dest="config_ini", default=None,
-                        help="Config file to read before applying CLI overrides.")
+                        help="Optional config override. Default: config.ini next to these scripts, then config.example.ini.")
     parser.add_argument("--any", action="append", dest="match_any",
                         help="Term that may appear. Repeat for multiple terms.")
     parser.add_argument("--all", action="append", dest="match_all",

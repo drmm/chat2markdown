@@ -39,7 +39,7 @@ Useful safety settings:
 - `overwrite_existing = false` skips or creates numbered outputs instead of replacing existing files.
 - `lookback_days`, `modified_after`, and `modified_before` limit exports/searches by source file modification date.
 
-For a safe preview when your local `config.ini` is in legacy live mode, run `python export_chat_archive.py --config-ini config.ini --dry-run`.
+For a safe preview when your local `config.ini` is in legacy live mode, run `python export_chat_archive.py --dry-run`.
 
 ## Config Reference
 
@@ -84,10 +84,11 @@ For a safe preview when your local `config.ini` is in legacy live mode, run `pyt
 ## Example Commands
 
 ```bash
-python export_chat_archive.py --config-ini config.ini --dry-run
-python export_chat_archive.py --config-ini config.ini
-python export_chat_archive.py --config-ini config.ini --codex --test --dry-run
-python filter_chat.py --config-ini config.ini
-python searchMD.py --config-ini config.ini --any optimizer --output "%TEMP%/chat2markdown-search.csv"
+python export_chat_archive.py
+python exportChats.py
+python export_chat_archive.py --dry-run
+python export_chat_archive.py --codex --test --dry-run
+python filter_chat.py
+python searchMD.py --any optimizer --output "%TEMP%/chat2markdown-search.csv"
 python export_chat_archive.py --input-file "%USER%/path/to/file.jsonl"
 ```

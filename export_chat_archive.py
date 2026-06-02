@@ -2748,7 +2748,7 @@ def main():
 
     parser = argparse.ArgumentParser(description="Export chat transcripts and plan artifacts to a searchable archive")
     parser.add_argument('--config-ini', '--ini', dest='config_ini', default=None,
-                       help='Config file to read before applying CLI overrides')
+                       help='Optional config override. Default: config.ini next to these scripts, then config.example.ini')
     parser.add_argument('--vscode', action='store_true', help='Export VSCode chats')
     parser.add_argument('--cursor', action='store_true', help='Export Cursor chats')
     parser.add_argument('--codex', action='store_true', help='Export Codex chats')
@@ -2895,6 +2895,7 @@ def main():
 
     if dry_run_enabled:
         print("DRY RUN - no files will be written, renamed, deleted, or indexed.")
+        print(f"config_ini: {cfg.display_path(cfg.path)}")
         print(f"archive_root: {cfg.display_path(archive_root)}")
         print(f"index_path: {cfg.display_path(index_path)}")
         print(f"vscode_source: {cfg.display_path(args.vscode_source)}")
