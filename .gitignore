@@ -1,0 +1,24 @@
+# Local config and secrets
+config.ini
+.env
+
+# Generated archives and filtered chat outputs
+archive/
+filtered/
+vscodechat/
+cursorcodechat/
+codexchat/
+claudecodechat/
+
+# Python/runtime artifacts
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Tooling/cache output
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+test-results/
