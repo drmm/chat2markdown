@@ -94,3 +94,23 @@ python filter_chat.py
 python searchMD.py --any optimizer --output "%TEMP%/chat2markdown-search.csv"
 python export_chat_archive.py --input-file "%USER%/path/to/file.jsonl"
 ```
+
+## Comparing Export Logs
+
+To compare this refactor against the original ChatMain exporter, run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\capture_export_logs.ps1
+```
+
+That runs both exporters into separate comparison archives under `export_log_runs/`,
+saves raw logs, creates normalized logs, and writes `normalized.diff.txt`.
+
+To run the exact configured archive paths instead, use:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\capture_export_logs.ps1 -UseConfiguredArchive
+```
+
+Exact mode writes to the live configured archive twice, so differences can reflect
+which exporter ran first.

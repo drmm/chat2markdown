@@ -22,3 +22,4 @@ env/
 .mypy_cache/
 .ruff_cache/
 test-results/
+export_log_runs/
