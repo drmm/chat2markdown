@@ -19,6 +19,8 @@ There are two shareable templates:
 
 Copy one template to `config.ini` for local use. Do not commit `config.ini`, `.env`, `archive/`, or `filtered/`; those can contain local paths, generated chat transcripts, and private conversation content.
 
+No-argument runs use `config.ini` by default. To change that default filename for every script, edit `default_config_file` near the top of `chatmain_config.py`.
+
 Path tokens:
 
 - `%USER%` means the current user's home folder.

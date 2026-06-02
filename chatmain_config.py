@@ -7,7 +7,13 @@ from pathlib import Path
 from typing import Iterable
 
 
-CONFIG_FILENAMES = ("config.ini", "config.example.ini")
+# Change this one line if no-argument runs should use a different config file.
+default_config_file = "config.ini"
+
+# Fallback used only when default_config_file is missing.
+fallback_config_file = "config.example.ini"
+
+CONFIG_FILENAMES = (default_config_file, fallback_config_file)
 
 
 def find_config_path(config_ini: str | None = None) -> Path:
